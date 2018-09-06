@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - SmallPlayer
+  - MediumPlayer
+  - LargePlayer
+  - Enemy
+  - DestructibleWall
+  - Wall
   layers:
   - Default
   - TransparentFX
