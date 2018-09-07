@@ -7,11 +7,11 @@ using UnityEngine;
 struct EnemyStatus
 {
     /// <summary>Player's speed</summary>
-    public float speed;
+    public float m_speed;
 }
 
+//アタッチするオブジェクトに対して必須コンポーネント追加を義務付ける
 [RequireComponent(typeof(BoxCollider2D))]
-[RequireComponent(typeof(Rigidbody2D))]
 
 public class EnemyController : MonoBehaviour
 {
@@ -27,13 +27,10 @@ public class EnemyController : MonoBehaviour
     private float m_elapsedTime;
     /// <summary>Fragment of end</summary>
     private bool m_directionToggle = true;
-    /// <summary>Rigidbody2D</summary>
-//    Rigidbody2D m_rb2d;
 
     private void Start()
     {
-        //rigidbody2d取得
-//        m_rb2d = GetComponent<Rigidbody2D>();
+
         // StartPosをオブジェクトに初期位置に設定
         transform.position = m_startPos;
         // 1秒当たりの移動量を算出

@@ -8,7 +8,7 @@ TagManager:
   - MediumPlayer
   - LargePlayer
   - Enemy
-  - DestructibleWall
+  - Destructable
   - Wall
   layers:
   - Default
