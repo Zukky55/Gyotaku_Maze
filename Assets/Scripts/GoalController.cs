@@ -31,7 +31,7 @@ public class GoalController : MonoBehaviour
     {
         if (m_goalList.Count == 3)  //配列の要素数が 3 になったら(プレイヤーが3匹ともゴール内に入ったら)
         {
-            m_goalText.text = "GOAL";  //メッセージを表示する
+            m_goalText.text = "Clear";  //メッセージを表示する
         }
         m_goalList.Clear();  //要素数が 3 以外なら毎回配列内をクリアする
     }

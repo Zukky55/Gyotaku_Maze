@@ -12,7 +12,7 @@ public class DestructibleWallController : MonoBehaviour
     {
         Debug.Log(collision.gameObject.tag);
         //プレイヤーと当たり判定があった場合プレイヤーのPlayerController.cs取得。且つm_typeの値がLargeだった場合壁破壊。
-        if (collision.gameObject.tag == "LargePlayer")
+        if (collision.gameObject.tag == "Player")
         {
            PlayerController pc = collision.gameObject.GetComponent<PlayerController>();
 

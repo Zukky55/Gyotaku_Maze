@@ -2,20 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+//アタッチするオブジェクトに対して必須コンポーネント追加を義務付ける
+[RequireComponent(typeof(BoxCollider2D))]
+
 public class SensorController : MonoBehaviour
 {
-    private int getWeight = 0;
-    /// <summary>プレイヤーの重さを記憶する配列</summary>
-    private List<int> weightList = new List<int>();
-    /// <summary>PlayerController のスクリプトを得るための変数</summary>
-    GameObject gameobject;
-    MovingWallController movingWallController;
+    /// <summary>プレイヤーの重さを記憶する変数</summary>
+    private int m_weightStorage;
+    /// <summary>GameObject of MovingWall</summary>
+    GameObject m_go;
+    /// <summary>MovingController</summary>
+    MovingWallController m_mwc;
+    PlayerController m_pc;
 
     // Use this for initialization
     void Start ()
     {
-        gameobject = GameObject.Find("MovingWall");
-        movingWallController = gameobject.GetComponent<MovingWallController>();
+        m_go = GameObject.Find("MovingWall");
+        m_mwc = m_go.GetComponent<MovingWallController>();
     }
 	
 	// Update is called once per frame
@@ -26,28 +31,31 @@ public class SensorController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        //weightList.Add(collision.gameObject.GetComponent<PlayerController>().m_playerWeight);
-
-        foreach (int weight in weightList)
+        if (collision.gameObject.tag == "Player")
         {
-            getWeight += weight;
+            m_pc = collision.gameObject.GetComponent<PlayerController>();
+            m_weightStorage += m_pc.m_myStatus.weight;
 
-            Debug.Log("weight = " + weight);
-            Debug.Log("getWeight = " + getWeight);
+            if (m_weightStorage >= 4)
+            {
+                m_mwc.MoveUp();
+            }
+            Debug.Log("OnTriggerEnter2D : " + m_weightStorage);
         }
-        if (getWeight >= 4)
-        {
-            movingWallController.MoveUp();
-        }
+
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        weightList.Clear();
-        getWeight = 0;
 
-        Debug.Log("weightList と getWeight をクリアしました。");
+        if (collision.gameObject.tag == "Player")
+        {
+            m_pc = collision.gameObject.GetComponent<PlayerController>();
+            m_weightStorage -= m_pc.m_myStatus.weight;
+            m_mwc.MoveDown();
+            Debug.Log("OnTriggerExit2D : " + m_weightStorage);
+        }
 
-        movingWallController.MoveDown();
+
     }
 }
