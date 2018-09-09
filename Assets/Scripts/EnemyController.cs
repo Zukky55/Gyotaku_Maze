@@ -11,7 +11,8 @@ struct EnemyStatus
 }
 
 //アタッチするオブジェクトに対して必須コンポーネント追加を義務付ける
-[RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(CircleCollider2D))]
+[RequireComponent(typeof(Rigidbody2D))]
 
 public class EnemyController : MonoBehaviour
 {
@@ -36,7 +37,7 @@ public class EnemyController : MonoBehaviour
         // 1秒当たりの移動量を算出
         m_deltaPos = (m_endPos - m_startPos) / m_time;
         m_elapsedTime = 0;
-        transform.rotation = Quaternion.FromToRotation(Vector3.up, m_startPos);
+        //transform.rotation = Quaternion.FromToRotation(Vector3.up, m_endPos);
     }
 
     void Update()
@@ -56,7 +57,7 @@ public class EnemyController : MonoBehaviour
                 m_deltaPos = (m_startPos - m_endPos) / m_time;
                 // 誤差があるとずれる可能性があるので念のためオブジェクトの位置をEndPosに設定
                 transform.position = m_endPos;
-                transform.rotation = Quaternion.FromToRotation(Vector3.up, m_endPos);
+                //transform.rotation = Quaternion.FromToRotation(Vector3.up, m_endPos);
             }
             else
             {
@@ -65,12 +66,22 @@ public class EnemyController : MonoBehaviour
                 m_deltaPos = (m_endPos - m_startPos) / m_time;
                 // 誤差があるとずれる可能性があるので念のためオブジェクトの位置をSrartPosに設定
                 transform.position = m_startPos;
-                transform.rotation = Quaternion.FromToRotation(Vector3.up, m_startPos);
+                //transform.rotation = Quaternion.FromToRotation(Vector3.up, m_startPos);
             }
             // 往路復路のフラグ反転
             m_directionToggle = !m_directionToggle;
             // 往路復路反転用経過時間クリア
             m_elapsedTime = 0;
+        }
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Player") 
+        {
+            PlayerController pc;
+            pc = collision.gameObject.GetComponent<PlayerController>();
+            pc.m_rb2d.position = pc.m_initPos;
         }
     }
 }

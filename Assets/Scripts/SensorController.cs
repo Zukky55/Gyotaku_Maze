@@ -9,7 +9,7 @@ using UnityEngine;
 public class SensorController : MonoBehaviour
 {
     /// <summary>プレイヤーの重さを記憶する変数</summary>
-    private int m_weightStorage;
+    private int m_weightBuffer;
     /// <summary>GameObject of MovingWall</summary>
     GameObject m_go;
     /// <summary>MovingController</summary>
@@ -34,13 +34,13 @@ public class SensorController : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             m_pc = collision.gameObject.GetComponent<PlayerController>();
-            m_weightStorage += m_pc.m_myStatus.weight;
+            m_weightBuffer += m_pc.m_myStatus.weight;
 
-            if (m_weightStorage >= 4)
+            if (m_weightBuffer >= 4)
             {
                 m_mwc.MoveUp();
             }
-            Debug.Log("OnTriggerEnter2D : " + m_weightStorage);
+            Debug.Log("OnTriggerEnter2D : " + m_weightBuffer);
         }
 
     }
@@ -51,9 +51,9 @@ public class SensorController : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             m_pc = collision.gameObject.GetComponent<PlayerController>();
-            m_weightStorage -= m_pc.m_myStatus.weight;
+            m_weightBuffer -= m_pc.m_myStatus.weight;
             m_mwc.MoveDown();
-            Debug.Log("OnTriggerExit2D : " + m_weightStorage);
+            Debug.Log("OnTriggerExit2D : " + m_weightBuffer);
         }
 
 

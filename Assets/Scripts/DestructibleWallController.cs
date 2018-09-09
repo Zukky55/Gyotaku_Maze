@@ -7,16 +7,14 @@ using UnityEngine;
 
 public class DestructibleWallController : MonoBehaviour
 {
+    private PlayerController m_pc;
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionStay2D(Collision2D collision)
     {
-        Debug.Log(collision.gameObject.tag);
-        //プレイヤーと当たり判定があった場合プレイヤーのPlayerController.cs取得。且つm_typeの値がLargeだった場合壁破壊。
-        if (collision.gameObject.tag == "Player")
+        if (collision.gameObject.name == "LargePlayer") //今後ここの名前は適宜変更する
         {
-           PlayerController pc = collision.gameObject.GetComponent<PlayerController>();
-
-            if (pc.m_type == Type.Large)
+            m_pc = collision.gameObject.GetComponent<PlayerController>();
+            if (m_pc.m_cbc2d.enabled == true)
             {
                 Destroy(gameObject);
             }

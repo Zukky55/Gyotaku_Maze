@@ -55,29 +55,34 @@ public class PlayerController : MonoBehaviour
     /// <summary>player's ability</summary>
     [SerializeField] Ability m_ability;
     /// <summary>Rigidbody2D</summary>
-    Rigidbody2D m_rb2d;
-    /// <summary>Position of the previous frame</summary>
-    private Vector3 m_offsetPos;
+    public Rigidbody2D m_rb2d;
+    /// <summary>操作対象切り替え</summary>
+    public bool m_moveFrag { get; set; }
+    /// <summary>Acquire spawn coedinates</summary>
+    public Vector2 m_initPos { get; set; }
 
     //debug
     GameObject gameobject;
     MovingWallController movingWallController;
 
+    //Temp
+    internal BoxCollider2D m_cbc2d;
+
+
     /// <summary>Mover</summary>
     void Move()
     {
         //x,y軸を入力しそのベクトルを取得,速度に代入
-        float x = Input.GetAxisRaw("Horizontal");
-        float y = Input.GetAxisRaw("Vertical");
+        float x = Input.GetAxis("Horizontal");
+        float y = Input.GetAxis("Vertical");
         Vector2 direction = new Vector2(x, y);
         m_rb2d.velocity = direction * m_myStatus.speed;
-        //前フレームのオフセットを取り、現フレームとの差異が一定量以上ある時だけ回転する様にして差異が0の時に上を向いてしまわない様にする
-        Vector3 diff = transform.position - m_offsetPos;
-        if (diff.magnitude > 0.01f)
+        //GetAxisの入力値が一定以上ある場合のみ角度変換する事で勝手に上に向いてしまわない様にする
+        if (x > 0.5f || x < -0.5f || y > 0.5f || y < -0.5f)
         {
             transform.rotation = Quaternion.FromToRotation(Vector2.up, direction);
         }
-        m_offsetPos = transform.position;
+
     }
 
     /// <summary>Change for each type</summary>
@@ -87,8 +92,9 @@ public class PlayerController : MonoBehaviour
         m_rb2d = GetComponent<Rigidbody2D>();
         //angularDragを設定可能最大値にして、壁等との接触による回転をほぼ無くす
         m_rb2d.angularDrag = 1000000;
+        //ステージ開始初期位置を保存
+        m_initPos = this.transform.position;
 
-        
 
         //プレイヤーのサイズジャンルに応じてステータスを決定する
         switch (m_type)
@@ -116,12 +122,17 @@ public class PlayerController : MonoBehaviour
         //今後はここにキャラクター名に応じてステータスを設定していくコードを書く。現時点で書いてあるのは見本
         switch(gameObject.name)
         {
-            case "Koi":
+            case "Carp":
                 m_SetMyStatus.speed = 5;
                 m_SetMyStatus.weight = 1;
                 m_SetMyStatus.inkGuage = 1;
                 m_ability = Ability.Through;
-
+                break;
+            case "SmokedShark":
+                m_SetMyStatus.speed = 5;
+                m_SetMyStatus.weight = 1;
+                m_SetMyStatus.inkGuage = 1;
+                m_ability = Ability.Destroy;
                 break;
             default:
                 break;
@@ -131,7 +142,11 @@ public class PlayerController : MonoBehaviour
         {
             case Ability.Through:
                 break;
+            default:
+                break;
         }
+
+
     }
 
     void Start()
@@ -141,22 +156,46 @@ public class PlayerController : MonoBehaviour
         //debug
         gameobject = GameObject.Find("MovingWall");
         movingWallController = gameobject.GetComponent<MovingWallController>();
+
+
+        //Temp
+        m_cbc2d = GetComponentInChildren<BoxCollider2D>();
+
     }
 
-    void FixedUpdate()
+    void Update()
     {
-        Move();
-
-        //debug
-        if(Input.GetMouseButtonDown(0))
+        if(m_moveFrag)
         {
-            movingWallController.MoveUp();
+            Move();
+
+            //debug
+            if (Input.GetMouseButtonDown(0))
+            {
+                movingWallController.MoveUp();
+            }
+            if (Input.GetMouseButtonDown(1))
+            {
+                movingWallController.MoveDown();
+            }
         }
-        if (Input.GetMouseButtonDown(1))
+        else
         {
-            movingWallController.MoveDown();
+            m_rb2d.velocity = Vector2.zero;
         }
 
+        //Temp
+        if (m_type == Type.Large)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))  // スペースを押したとき
+            {
+                m_cbc2d.enabled = true;         // AttackRange の　BoxCollider2D を enable にする
+            }
+            if (Input.GetKeyUp(KeyCode.Space))    // スペースを離したとき
+            {
+                m_cbc2d.enabled = false;        // AttackRange の　BoxCollider2D を disable にする
+            }
+        }
 
     }
 
